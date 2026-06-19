@@ -168,8 +168,13 @@ function addLog(msg,type=''){
 // SETUP / PHASE
 // ═══════════════════════════════════════════════════
 function showScreen(id){
-  ['setup','election','pregame','game'].forEach(s=>
+  ['intro','setup','election','pregame','game'].forEach(s=>
     document.getElementById('sc-'+s).style.display=(s===id?'':'none'));
+}
+
+function goToSetup(){
+  renderSetup();
+  showScreen('setup');
 }
 
 function renderSetup(){
@@ -193,11 +198,13 @@ function togglePol(id){
 function updateElPreview(){
   const bonus=Math.min(GAME.policies.size*5,25);
   document.getElementById('el-preview').textContent=`คะแนนนิยมคาดการณ์: ${45+bonus}% (±8%)`;
+  document.getElementById('btn-setup').disabled=GAME.policies.size===0;
 }
 
 function doSetup(){
   const name=document.getElementById('abt-name').value.trim();
   if(!name){alert('กรุณาใส่ชื่อ อบต.');return;}
+  if(GAME.policies.size===0){alert('กรุณาเลือกนโยบายอย่างน้อย 1 อย่าง');return;}
   GAME.abtName=name;
   const bonus=Math.min(GAME.policies.size*5,25);
   const rand=rng(17)-8;
@@ -1294,6 +1301,5 @@ if(loadGame()){
   restartInt();
   addLog('💾 โหลดเกมต่อจากที่บันทึกไว้','good');
 }else{
-  renderSetup();
-  showScreen('setup');
+  showScreen('intro');
 }

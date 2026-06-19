@@ -9,6 +9,46 @@
 </head>
 <body>
 
+<!-- ══ INTRO SCREEN ══ -->
+<div id="sc-intro" class="screen">
+<div class="sbox" style="max-width:560px">
+
+  <!-- cartoon scene -->
+  <div style="background:var(--bg3);border-radius:14px;padding:20px 10px 10px;margin-bottom:18px;text-align:center">
+    <div style="font-size:13px;letter-spacing:2px;margin-bottom:6px">
+      🌤️&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;☁️
+    </div>
+    <div style="font-size:36px;line-height:1.3;margin-bottom:2px">
+      🌳&nbsp;🏛️&nbsp;🏥&nbsp;🌳
+    </div>
+    <div style="font-size:36px;line-height:1.3;margin-bottom:2px">
+      🏠&nbsp;&nbsp;👨‍💼&nbsp;&nbsp;🏠
+    </div>
+    <div style="font-size:28px;line-height:1;letter-spacing:4px;color:var(--text2)">
+      🛣️🛣️🛣️🛣️🛣️🛣️
+    </div>
+    <div style="font-size:11px;color:var(--text2);margin-top:8px">— ชุมชนที่คุณอยากพัฒนา —</div>
+  </div>
+
+  <!-- story -->
+  <h1 style="font-size:20px;margin-bottom:10px">🏛 Idle Mayor</h1>
+  <div style="font-size:13px;line-height:1.9;color:var(--text);background:var(--bg3);border-radius:10px;padding:14px 16px;border-left:3px solid var(--accent)">
+    <p>คุณเติบโตมาในชุมชนเล็กๆ ที่มีทั้งความอบอุ่นและความขาดแคลน</p>
+    <p>ถนนทรุดโทรม น้ำประปาไม่สม่ำเสมอ โรงเรียนขาดแคลนทรัพยากร</p>
+    <p>คุณเห็นมาตลอดว่าบ้านเกิดสมควรได้รับสิ่งที่ดีกว่านี้</p>
+    <p>หลังจากเรียนจบและทำงานมาหลายปี วันหนึ่งคุณตัดสินใจ…</p>
+    <p style="color:var(--accent);font-weight:700">ถึงเวลาแล้วที่จะเปลี่ยนแปลงชุมชนด้วยมือของตัวเอง</p>
+    <p>คุณประกาศลงสมัครรับเลือกตั้งนายกองค์การบริหารส่วนตำบล</p>
+    <p>ภารกิจของคุณคือบริหารงบประมาณ พัฒนาสาธารณูปโภค ดูแลชาวบ้าน</p>
+    <p>ทำให้ความพึงพอใจของประชาชนสูงขึ้น เพื่อคว้าชัยการเลือกตั้งครั้งต่อไป</p>
+    <p>แต่การบริหารไม่ใช่เรื่องง่าย — ทรัพยากรมีจำกัด ปัญหามีไม่หมด</p>
+    <p style="color:var(--green);font-weight:700">คุณพร้อมพิสูจน์ตัวเองในฐานะนายก อบต. ที่ชาวบ้านไว้ใจแล้วหรือยัง?</p>
+  </div>
+
+  <button class="btn btn-accent btn-lg" onclick="goToSetup()">🚀 เริ่มเกม</button>
+</div>
+</div>
+
 <!-- ══ SETUP SCREEN ══ -->
 <div id="sc-setup" class="screen">
 <div class="sbox">
@@ -19,7 +59,7 @@
   <h3>นโยบายสำหรับการหาเสียง <span class="text-gray">(เลือกได้หลายอย่าง)</span></h3>
   <div class="pol-grid" id="pol-grid"></div>
   <div class="el-preview" id="el-preview">คะแนนนิยมคาดการณ์: 45%</div>
-  <button class="btn btn-accent btn-lg" onclick="doSetup()">🗳 หาเสียง!</button>
+  <button class="btn btn-accent btn-lg" id="btn-setup" onclick="doSetup()" disabled>🗳 หาเสียง!</button>
 </div>
 </div>
 
