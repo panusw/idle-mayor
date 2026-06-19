@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Idle Mayor — นายก อบต.</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.29.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ══ SETUP SCREEN ══ -->
+<div id="sc-setup" class="screen">
+<div class="sbox">
+  <h1>🏛 Idle Mayor</h1>
+  <p class="text-gray fs11 mb8">บริหาร อบต. ให้ชุมชนเจริญรุ่งเรือง</p>
+  <h3>ชื่อ อบต.</h3>
+  <input class="inp" id="abt-name" placeholder="เช่น อบต.บ้านโคก" maxlength="30">
+  <h3>นโยบายสำหรับการหาเสียง <span class="text-gray">(เลือกได้หลายอย่าง)</span></h3>
+  <div class="pol-grid" id="pol-grid"></div>
+  <div class="el-preview" id="el-preview">คะแนนนิยมคาดการณ์: 45%</div>
+  <button class="btn btn-accent btn-lg" onclick="doSetup()">🗳 หาเสียง!</button>
+</div>
+</div>
+
+<!-- ══ ELECTION SCREEN ══ -->
+<div id="sc-election" class="screen" style="display:none">
+<div class="sbox">
+  <div class="el-banner" id="el-banner">
+    <span class="big-num" id="el-pct">50%</span>
+    <div class="mt4 fw7" id="el-msg">คะแนนเสียงจากประชาชน</div>
+    <div class="fs11 text-gray mt4" id="el-policies"></div>
+  </div>
+  <div id="el-btn-area"></div>
+</div>
+</div>
+
+<!-- ══ PREGAME SCREEN ══ -->
+<div id="sc-pregame" class="screen" style="display:none">
+<div class="sbox">
+  <h2>📋 สรุปทรัพยากรเริ่มต้น</h2>
+  <div id="pg-content"></div>
+  <button class="btn btn-accent btn-lg" onclick="startGame()">🚀 เริ่มบริหาร อบต.!</button>
+</div>
+</div>
+
+<!-- ══ GAME ══ -->
+<div id="sc-game" style="display:none">
+<div id="app">
+
+  <!-- Header -->
+  <div class="header">
+    <div>
+      <div class="header-title">🏛 <span id="hd-name">อบต.</span></div>
+      <div class="sat-wrap">
+        <div class="sat-bar"><div class="sat-fill" id="satFill" style="width:50%"></div></div>
+        <span class="fs11 text-gray" id="satLabel">50%</span>
+      </div>
+    </div>
+    <div class="header-stats">
+      <div class="stat-item"><div class="stat-val" id="budgetVal">฿500</div><div class="stat-lbl">งบประมาณ</div></div>
+      <div class="stat-item"><div class="stat-val" id="netVal">+฿0</div><div class="stat-lbl">สุทธิ/สัปดาห์</div></div>
+      <div class="stat-item"><div class="stat-val" id="yearVal">ปี 1</div><div class="stat-lbl">เดือน <span id="monthVal">1</span></div></div>
+    </div>
+    <div class="controls">
+      <button class="btn btn-sm" id="sp025" onclick="setSpeed(0.25)">0.25×</button>
+      <button class="btn btn-sm" id="sp05"  onclick="setSpeed(0.5)">0.5×</button>
+      <button class="btn btn-sm active" id="sp1" onclick="setSpeed(1)">1×</button>
+      <button class="btn btn-sm" id="sp2"  onclick="setSpeed(2)">2×</button>
+      <button class="btn btn-sm" id="sp5"  onclick="setSpeed(5)">5×</button>
+      <button class="btn btn-sm" id="btnPause" onclick="togglePause()">⏸</button>
+      <button class="btn btn-sm btn-red" onclick="confirmResign()" title="ลาออกจากตำแหน่ง">↩ ลาออก</button>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('overview')">ภาพรวม</div>
+    <div class="tab" onclick="switchTab('staff')">บุคลากร <span class="tab-dot" id="dotStaff"></span></div>
+    <div class="tab" onclick="switchTab('infra')">สิ่งปลูกสร้าง <span class="tab-dot" id="dotInfra"></span></div>
+    <div class="tab" onclick="switchTab('projects')">โครงการ <span class="tab-dot" id="dotProjects"></span></div>
+  </div>
+
+  <!-- Overview -->
+  <div class="tab-panel active" id="panel-overview">
+    <div class="card">
+      <div class="card-hd"><span class="card-title">🏘 ความต้องการชุมชน</span><span class="fs10 text-gray">อัปเดตทุก tick</span></div>
+      <div class="needs-grid" id="needsGrid"></div>
+    </div>
+    <div class="grid-2">
+      <div class="card"><div class="card-hd"><span class="card-title">💰 งบประมาณ</span></div><div id="budgetDetail"></div></div>
+      <div class="card"><div class="card-hd"><span class="card-title">📊 สรุป</span></div><div id="resourceSummary"></div></div>
+    </div>
+    <div class="card"><div class="card-hd"><span class="card-title">📋 บันทึกเหตุการณ์</span></div><div class="log" id="eventLog"></div></div>
+  </div>
+
+  <!-- Staff -->
+  <div class="tab-panel" id="panel-staff">
+    <div class="sec-title">บุคลากรปัจจุบัน</div>
+    <div id="staffList" class="grid-2"></div>
+    <div class="sec-title">จ้างพนักงานใหม่</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
+      <button class="btn btn-sm btn-green"  onclick="startHire('clerk')">+ พนักงาน (฿400)</button>
+      <button class="btn btn-sm btn-yellow" onclick="startHire('engineer')">+ นายช่าง (฿700)</button>
+      <button class="btn btn-sm btn-blue"   onclick="startHire('doctor')">+ สาธารณสุข (฿650)</button>
+      <button class="btn btn-sm btn-purple" onclick="startHire('planner')">+ นักวางแผน (฿900)</button>
+    </div>
+    <div id="hireCandidates"></div>
+  </div>
+
+  <!-- Infra -->
+  <div class="tab-panel" id="panel-infra">
+    <div class="sec-title">สิ่งปลูกสร้าง</div>
+    <div id="infraList" class="grid-2"></div>
+    <div id="infraEmpty" class="text-gray fs11" style="display:none">ยังไม่มีสิ่งปลูกสร้าง — ดำเนินโครงการก่อสร้างจากแท็บ โครงการ</div>
+  </div>
+
+  <!-- Projects -->
+  <div class="tab-panel" id="panel-projects">
+    <div class="sec-title">กำลังดำเนิน</div><div id="activeProjList"></div>
+    <div class="sec-title">ซ่อมแซมสิ่งปลูกสร้าง</div><div id="repairSection"></div>
+    <div class="sec-title">โครงการก่อสร้าง <span class="fs10 text-gray">(ต้องมีนายช่าง)</span></div>
+    <div id="constructionCards" class="grid-3"></div>
+    <div class="sec-title">โครงการชุมชน</div>
+    <div id="communityCards" class="grid-3"></div>
+  </div>
+
+</div><!-- #app -->
+
+<!-- ══ MODAL: Year Review ══ -->
+<div id="modal-review" class="overlay" style="display:none">
+<div class="mbox">
+  <h2>📊 สรุปผลงานประจำปี <span id="rv-year-title"></span></h2>
+  <div id="rv-stats" class="rv-stat-grid"></div>
+  <div class="sec-title">ความต้องการชุมชน (สิ้นปี)</div>
+  <div id="rv-needs" class="needs-grid"></div>
+  <div class="sec-title">ผลงานตามนโยบาย</div>
+  <div id="rv-policy" class="mb8"></div>
+  <div class="sec-title">ประเมินผลการทำงานบุคลากร</div>
+  <div id="rv-staff"></div>
+  <div class="flex-sb mt8" style="background:var(--bg3);padding:10px;border-radius:8px">
+    <span class="fs11 text-gray">ค่าโบนัสรวม:</span>
+    <span class="fw7 text-yellow" id="rv-bonus-total">฿0</span>
+  </div>
+  <button class="btn btn-accent btn-lg mt8" onclick="confirmYearReview()">✅ ยืนยันและปิดรายงาน</button>
+</div>
+</div>
+
+<!-- ══ MODAL: No Confidence ══ -->
+<div id="modal-nc" class="overlay" style="display:none">
+<div class="mbox" style="max-width:620px">
+  <h2 style="color:var(--red)">⚠️ เสนอญัตติไม่ไว้วางใจ</h2>
+  <p class="fs11 text-gray mb8">ความพึงพอใจของประชาชนตกต่ำถึงขีดสุด สมาชิกสภา อบต. ได้เสนอญัตติไม่ไว้วางใจต่อนายกฯ คุณต้องตอบคำถามให้ได้รับการยอมรับ</p>
+  <div class="nc-prog" id="nc-prog"></div>
+  <div id="nc-body"></div>
+  <div id="nc-result" style="display:none"></div>
+</div>
+</div>
+
+<!-- ══ MODAL: Resign Confirm ══ -->
+<div id="modal-resign" class="overlay" style="display:none">
+<div class="mbox" style="max-width:420px;text-align:center">
+  <div style="font-size:36px;margin-bottom:8px">👋</div>
+  <h2>ลาออกจากตำแหน่งนายก?</h2>
+  <p class="fs11 text-gray mt4 mb8" style="line-height:1.6">เกมจะจบลงทันทีและแสดงสรุปผลงานที่ผ่านมา<br>ข้อมูลการบันทึกจะถูกลบออก</p>
+  <div style="display:flex;gap:10px;justify-content:center">
+    <button class="btn btn-red" style="padding:8px 24px;font-size:14px" onclick="doResign()">ยืนยัน ลาออก</button>
+    <button class="btn" style="padding:8px 24px;font-size:14px" onclick="document.getElementById('modal-resign').style.display='none';if(GAME.phase==='playing')restartInt()">ยกเลิก</button>
+  </div>
+</div>
+</div>
+
+<!-- ══ MODAL: Term End ══ -->
+<div id="modal-term" class="overlay" style="display:none">
+<div class="mbox">
+  <h2 id="term-title">🏛 ครบวาระการบริหาร 4 ปี</h2>
+  <div id="term-content"></div>
+  <div id="term-btns" class="mt8" style="display:flex;gap:10px;flex-wrap:wrap"></div>
+</div>
+</div>
+
+</div><!-- #sc-game -->
+
+<script src="game.js"></script>
+</body>
+</html>
